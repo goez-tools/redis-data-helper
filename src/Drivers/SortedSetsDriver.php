@@ -9,15 +9,30 @@ namespace Goez\RedisDataHelper\Drivers;
 class SortedSetsDriver extends AbstractDriver
 {
     /**
+     * @var callable
+     */
+    private $closure;
+
+    /**
      * @param array $list
      */
     public function addList(array $list)
     {
         $result = [];
         foreach ($list as $value => $score) {
-            $result[json_encode((string) $value)] = $score;
+            $result[json_encode((string)$value)] = $score;
         }
         $this->client->zadd($this->key, $result);
+    }
+
+    /**
+     * @param callable $middleware
+     * @return SortedSetsDriver
+     */
+    public function middleware(callable $middleware)
+    {
+        $this->closure = $middleware;
+        return $this;
     }
 
     /**
@@ -28,9 +43,13 @@ class SortedSetsDriver extends AbstractDriver
     {
         $start = ($count > 0) ? -$count : 0;
         $list = $this->client->zrange($this->key, $start, -1, 'withscores');
+        if (is_callable($this->closure)) {
+            return call_user_func($this->closure, $list);
+        }
+
         $result = [];
         foreach ($list as $value => $score) {
-            $result[json_decode($value, true)] = (int) $score;
+            $result[json_decode($value, true)] = (int)$score;
         }
         return $result;
     }
