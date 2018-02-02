@@ -17,6 +17,16 @@ class ClientWrapperTest extends TestCase
     /**
      * @test
      */
+    public function it_should_delete_nothing()
+    {
+        $wrapper = new ClientWrapper($this->testRedisClient);
+        $count = $wrapper->delete('nothing');
+        $this->assertEquals(0, $count);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_delete_keys()
     {
         $keyPattern = $this->assembleKey('*');
