@@ -35,4 +35,12 @@ class SetsDriver extends AbstractDriver
             return json_decode($item, true);
         }, $list);
     }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return (int)$this->client->scard($this->key);
+    }
 }
