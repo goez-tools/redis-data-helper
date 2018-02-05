@@ -59,14 +59,14 @@ class MultiDriverTest extends TestCase
             $this->assembleKey('def'),
             $this->assembleKey('ghi'),
         ];
-        $expect = [1, 2, 3,];
+        $expected = [1, 2, 3,];
         $this->testRedisClient->set($keys[0], 1);
         $this->testRedisClient->set($keys[1], 2);
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
         $result = $driver->key($keyPattern)->get();
-        $this->assertEquals(sort($expect), sort($result));
+        $this->assertEquals(sort($expected), sort($result));
     }
 
     /**
@@ -79,14 +79,14 @@ class MultiDriverTest extends TestCase
             $this->assembleKey('def'),
             $this->assembleKey('ghi'),
         ];
-        $expect = [1, 2, 3,];
+        $expected = [1, 2, 3,];
         $this->testRedisClient->set($keys[0], 1);
         $this->testRedisClient->set($keys[1], 2);
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
         $result = $driver->key($keys)->get();
-        $this->assertEquals($expect, $result);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -99,7 +99,7 @@ class MultiDriverTest extends TestCase
             $this->assembleKey('def'),
             $this->assembleKey('ghi'),
         ];
-        $expect = [
+        $expected = [
             'testing:abc' => 1,
             'testing:def' => 2,
             'testing:ghi' => 3,
@@ -110,6 +110,6 @@ class MultiDriverTest extends TestCase
 
         $driver = new MultiDriver($this->testRedisClient);
         $result = $driver->key($keys)->withKey()->get();
-        $this->assertEquals($expect, $result);
+        $this->assertEquals($expected, $result);
     }
 }
