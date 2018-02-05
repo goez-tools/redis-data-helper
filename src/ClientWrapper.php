@@ -2,6 +2,7 @@
 
 namespace Goez\RedisDataHelper;
 
+use Goez\RedisDataHelper\Drivers\MultiDriver;
 use Goez\RedisDataHelper\Drivers\SetsDriver;
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
@@ -25,22 +26,6 @@ class ClientWrapper
     public function __construct(Client $client)
     {
         $this->client = $client;
-    }
-
-    /**
-     * @param string|array $pattern
-     *
-     * @return int
-     */
-    public function delete($pattern)
-    {
-        if (!is_array($pattern)) {
-            $keys = $this->client->keys((string)$pattern);
-        }
-        if (!empty($keys)) {
-            return $this->client->del($keys);
-        }
-        return 0;
     }
 
     /**
@@ -71,5 +56,15 @@ class ClientWrapper
     {
         $driver = new SortedSetsDriver($this->client);
         return $driver->key($key);
+    }
+
+    /**
+     * @param $keys
+     * @return MultiDriver
+     */
+    public function multi($keys)
+    {
+        $driver = new MultiDriver($this->client);
+        return $driver->key($keys);
     }
 }

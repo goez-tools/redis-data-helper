@@ -16,9 +16,9 @@ abstract class AbstractDriver
     protected $client;
 
     /**
-     * @var string
+     * @var string|array
      */
-    protected $key = '';
+    protected $key;
 
     /**
      * AbstractDriver constructor.
@@ -30,12 +30,12 @@ abstract class AbstractDriver
     }
 
     /**
-     * @param string $key
+     * @param string|array $key
      * @return static
      */
     public function key($key)
     {
-        $this->key = (string)$key;
+        $this->key = is_array($key) ? $key : (string)$key;
         return $this;
     }
 }
