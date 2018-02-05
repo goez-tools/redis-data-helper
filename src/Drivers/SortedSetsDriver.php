@@ -53,4 +53,23 @@ class SortedSetsDriver extends AbstractDriver
         }
         return $result;
     }
+
+    /**
+     * @param int $count
+     * @return array
+     */
+    public function getReversedList($count = -1)
+    {
+        $stop = $count === -1 ? $count : $count - 1;
+        $list = $this->client->zrevrange($this->key, 0, $stop, 'withscores');
+        if (is_callable($this->closure)) {
+            return call_user_func($this->closure, $list);
+        }
+
+        $result = [];
+        foreach ($list as $value => $score) {
+            $result[json_decode($value, true)] = (int)$score;
+        }
+        return $result;
+    }
 }
