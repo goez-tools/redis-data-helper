@@ -26,6 +26,16 @@ class SortedSetsDriver extends AbstractDriver
     }
 
     /**
+     * @param mixed $value
+     * @param int $score
+     */
+    public function add($value, $score)
+    {
+        $result = [json_encode($value) => $score];
+        $this->client->zadd($this->key, $result);
+    }
+
+    /**
      * @param callable $middleware
      * @return SortedSetsDriver
      */

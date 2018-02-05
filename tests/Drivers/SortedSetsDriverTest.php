@@ -151,4 +151,23 @@ class SortedSetsDriverTest extends TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * @test
+     */
+    public function it_could_add_array_as_item()
+    {
+        $key = $this->assembleKey('example');
+        $expected = [
+            '{"abc":1}' => 123,
+        ];
+
+        $driver = new SortedSetsDriver($this->testRedisClient);
+        $driver->key($key)->add([
+            'abc' => 1,
+        ], 123);
+
+        $actual = $this->testRedisClient->zrange($key, 0, -1, 'withscores');
+        $this->assertEquals($expected, $actual);
+    }
 }
