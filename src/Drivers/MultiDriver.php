@@ -5,6 +5,20 @@ namespace Goez\RedisDataHelper\Drivers;
 class MultiDriver extends AbstractDriver
 {
     /**
+     * @var bool
+     */
+    private $withKey = false;
+
+    /**
+     * @return MultiDriver
+     */
+    public function withKey()
+    {
+        $this->withKey = true;
+        return $this;
+    }
+
+    /**
      *
      * @return int
      */
@@ -31,10 +45,11 @@ class MultiDriver extends AbstractDriver
 
         $result = $this->client->mget($keys);
         if (is_array($result)) {
-            return array_map(function ($item) use ($callback) {
+            $values = array_map(function ($item) use ($callback) {
                 $value = json_decode($item, true);
                 return is_callable($callback) ? $callback($value) : $value;
             }, $result);
+            return $this->withKey ? array_combine($this->key, $values) : $values;
         }
         return $result;
     }

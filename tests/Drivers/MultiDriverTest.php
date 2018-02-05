@@ -88,4 +88,28 @@ class MultiDriverTest extends TestCase
         $result = $driver->key($keys)->get();
         $this->assertEquals($expect, $result);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_get_dictionary_with_key_array()
+    {
+        $keys = [
+            $this->assembleKey('abc'),
+            $this->assembleKey('def'),
+            $this->assembleKey('ghi'),
+        ];
+        $expect = [
+            'testing:abc' => 1,
+            'testing:def' => 2,
+            'testing:ghi' => 3,
+        ];
+        $this->testRedisClient->set($keys[0], 1);
+        $this->testRedisClient->set($keys[1], 2);
+        $this->testRedisClient->set($keys[2], 3);
+
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->key($keys)->withKey()->get();
+        $this->assertEquals($expect, $result);
+    }
 }
