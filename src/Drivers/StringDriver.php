@@ -18,10 +18,10 @@ class StringDriver extends AbstractDriver
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function get()
     {
-        return json_decode($this->client->get($this->key));
+        return json_decode($this->client->get($this->key), true);
     }
 }
