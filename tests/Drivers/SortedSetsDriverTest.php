@@ -63,7 +63,7 @@ class SortedSetsDriverTest extends TestCase
         $driver = new SortedSetsDriver($this->testRedisClient);
         $actual = $driver->key($key)->getList();
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -98,7 +98,7 @@ class SortedSetsDriverTest extends TestCase
             })
             ->getList();
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -123,6 +123,6 @@ class SortedSetsDriverTest extends TestCase
         $driver = new SortedSetsDriver($this->testRedisClient);
         $actual = $driver->key($key)->getList(2);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 }
