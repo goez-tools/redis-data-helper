@@ -54,4 +54,23 @@ class StringDriverTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_not_exist()
+    {
+        $driver = (new StringDriver($this->testRedisClient))->key('testing:abc');
+        $this->assertFalse($driver->exists());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_exist()
+    {
+        $driver = (new StringDriver($this->testRedisClient))->key('testing:abc');
+        $driver->set(123);
+        $this->assertTrue($driver->exists());
+    }
 }

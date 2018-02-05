@@ -38,4 +38,12 @@ abstract class AbstractDriver
         $this->key = is_array($key) ? $key : (string)$key;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        return (bool)$this->client->exists($this->key);
+    }
 }
