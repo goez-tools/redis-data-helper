@@ -93,6 +93,32 @@ class MultiDriverTest extends TestCase
     /**
      * @test
      */
+    public function it_should_get_empty_array()
+    {
+        $expected = [];
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->get();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_get_null_array()
+    {
+        $expected = [null, null, null,];
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->key([
+            'abc',
+            'def',
+            'ghi',
+        ])->get();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_get_dictionary_with_key_array()
     {
         $keys = [
@@ -126,7 +152,7 @@ class MultiDriverTest extends TestCase
         ];
 
         $driver = new MultiDriver($this->testRedisClient);
-        $expected = [1,2,3,];
+        $expected = [1, 2, 3,];
         $driver->transact(function (ClientWrapper $clientWrapper) use ($keys) {
             $clientWrapper->string($keys[0])->set(1);
             $clientWrapper->string($keys[1])->set(2);
