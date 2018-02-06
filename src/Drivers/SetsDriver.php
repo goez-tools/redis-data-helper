@@ -43,4 +43,12 @@ class SetsDriver extends AbstractDriver
     {
         return (int)$this->client->scard($this->key);
     }
+
+    /**
+     * @param int $count
+     */
+    public function pop($count = 1)
+    {
+        $this->client->spop($this->key, $count);
+    }
 }

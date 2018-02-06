@@ -81,4 +81,44 @@ class SetsDriverTest extends TestCase
 
         $this->assertCount(2, $actual);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_pop_a_member()
+    {
+        $key = $this->assembleKey('example');
+        $list = [
+            '"111111"',
+            '"222222"',
+            '"333333"',
+        ];
+        $this->testRedisClient->sadd($key, $list);
+
+        $driver = (new SetsDriver($this->testRedisClient))->key($key);
+        $this->assertEquals(3, $driver->count());
+        $driver->pop();
+        $this->assertEquals(2, $driver->count());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_pop_multiple_members()
+    {
+        $key = $this->assembleKey('example');
+        $list = [
+            '"111111"',
+            '"222222"',
+            '"333333"',
+            '"444444"',
+            '"555555"',
+        ];
+        $this->testRedisClient->sadd($key, $list);
+
+        $driver = (new SetsDriver($this->testRedisClient))->key($key);
+        $this->assertEquals(5, $driver->count());
+        $driver->pop(3);
+        $this->assertEquals(2, $driver->count());
+    }
 }
