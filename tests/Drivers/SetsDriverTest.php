@@ -15,7 +15,7 @@ class SetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_add_list_to_given_key()
+    public function it_should_add_list()
     {
         $key = $this->assembleKey('example');
 
@@ -41,7 +41,7 @@ class SetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_a_list_with_given_key()
+    public function it_should_get_a_list()
     {
         $key = $this->assembleKey('example');
         $list = [
@@ -66,7 +66,7 @@ class SetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_partial_list_with_given_key()
+    public function it_should_get_partial_list()
     {
         $key = $this->assembleKey('example');
         $list = [
@@ -80,6 +80,16 @@ class SetsDriverTest extends TestCase
         $actual = $driver->key($key)->getList(2);
 
         $this->assertCount(2, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_get_zero_count()
+    {
+        $driver = new SetsDriver($this->testRedisClient);
+        $actual = $driver->key('nothing')->count();
+        $this->assertEquals(0, $actual);
     }
 
     /**

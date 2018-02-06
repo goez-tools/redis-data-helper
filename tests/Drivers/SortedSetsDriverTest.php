@@ -15,7 +15,7 @@ class SortedSetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_add_list_with_given_key()
+    public function it_should_add_a_scored_list()
     {
         $key = $this->assembleKey('example');
 
@@ -43,7 +43,7 @@ class SortedSetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_scored_list_with_given_key()
+    public function it_should_get_scored_list()
     {
         $key = $this->assembleKey('example');
 
@@ -69,7 +69,7 @@ class SortedSetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_reversed_list_with_given_key()
+    public function it_should_get_reversed_scored_list()
     {
         $key = $this->assembleKey('example');
 
@@ -165,7 +165,7 @@ class SortedSetsDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_partial_list_with_given_key()
+    public function it_should_get_partial_list()
     {
         $key = $this->assembleKey('example');
 

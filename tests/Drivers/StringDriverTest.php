@@ -15,13 +15,28 @@ class StringDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_a_string_with_given_key()
+    public function it_should_set_a_string()
     {
         $key = $this->assembleKey('example');
         $expected = '"123456"';
 
         $driver = new StringDriver($this->testRedisClient);
         $driver->key($key)->set('123456');
+        $actual = $this->testRedisClient->get($key);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_set_a_array()
+    {
+        $key = $this->assembleKey('example');
+        $expected = '{"abc":"123456"}';
+
+        $driver = new StringDriver($this->testRedisClient);
+        $driver->key($key)->set(['abc' => '123456']);
         $actual = $this->testRedisClient->get($key);
 
         $this->assertEquals($expected, $actual);
@@ -43,7 +58,7 @@ class StringDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_expected_value_with_given_key()
+    public function it_should_get_expected_value()
     {
         $key = $this->assembleKey('example');
         $expected = '123456';
