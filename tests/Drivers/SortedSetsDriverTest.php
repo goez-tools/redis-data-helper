@@ -170,4 +170,26 @@ class SortedSetsDriverTest extends TestCase
         $actual = $this->testRedisClient->zrange($key, 0, -1, 'withscores');
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_remove_item()
+    {
+        $key = $this->assembleKey('example');
+        $expected = [
+            '"def"' => 456,
+        ];
+
+        $this->testRedisClient->zadd($key, [
+            '"abc"' => 123,
+            '"def"' => 456,
+        ]);
+
+        $driver = new SortedSetsDriver($this->testRedisClient);
+        $driver->key($key)->remove('abc');
+
+        $actual = $this->testRedisClient->zrange($key, 0, -1, 'withscores');
+        $this->assertEquals($expected, $actual);
+    }
 }

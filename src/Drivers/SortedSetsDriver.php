@@ -82,4 +82,12 @@ class SortedSetsDriver extends AbstractDriver
         }
         return $result;
     }
+
+    /**
+     * @param $member
+     */
+    public function remove($member)
+    {
+        $this->client->zrem($this->key, json_encode($member));
+    }
 }
