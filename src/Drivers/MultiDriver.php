@@ -2,6 +2,8 @@
 
 namespace Goez\RedisDataHelper\Drivers;
 
+use Goez\RedisDataHelper\ClientWrapper;
+
 class MultiDriver extends AbstractDriver
 {
     /**
@@ -52,5 +54,15 @@ class MultiDriver extends AbstractDriver
             return $this->withKey ? array_combine($this->key, $values) : $values;
         }
         return $result;
+    }
+
+    /**
+     * @param \Closure $callback
+     */
+    public function transact(\Closure $callback)
+    {
+        $this->client->multi();
+        $callback(new ClientWrapper($this->client));
+        $this->client->exec();
     }
 }
