@@ -130,6 +130,41 @@ class SortedSetsDriverTest extends TestCase
     /**
      * @test
      */
+    public function it_should_get_special_reversed_list_with_middleware()
+    {
+        $key = $this->assembleKey('example');
+
+        $list = [
+            '"111111"' => 4,
+            '"222222"' => 2,
+            '"333333"' => 6,
+        ];
+        $expected = [
+            '333333' => 36,
+            '111111' => 16,
+            '222222' => 4,
+        ];
+
+        $this->testRedisClient->zadd($key, $list);
+
+        $driver = new SortedSetsDriver($this->testRedisClient);
+        $actual = $driver
+            ->key($key)
+            ->middleware(function (array $list) {
+                $result = [];
+                foreach ($list as $value => $score) {
+                    $result[json_decode($value, true)] = (int)$score * (int)$score;
+                }
+                return $result;
+            })
+            ->getReversedList();
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_get_partial_list_with_given_key()
     {
         $key = $this->assembleKey('example');
