@@ -1,6 +1,6 @@
 {
   "name": "goez/redis-data-helper",
-  "description": "A library for operation redis data (personal use)",
+  "description": "Keep typed data in store safely.",
   "authors": [
     {
       "name": "Jace Ju",

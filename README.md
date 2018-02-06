@@ -1,24 +1,16 @@
-# Awesome library for something
+# Redis Data Helper
 
-This is a composer based library.
+Keep typed data in store safely.
 
 ## Install
 
 ```bash
-composer require vendor/package --dev
+composer require goez/redis-data-helper
 ```
 
 ## Usage
 
-Documents for this library.
-
-## Hacking
-
-Watch modification of source and test cases, then run:
-
-```bash
-composer run watch
-```
+See examples in `tests` folder.
 
 ## License
 
