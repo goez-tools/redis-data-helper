@@ -51,4 +51,13 @@ class SetsDriver extends AbstractDriver
     {
         $this->client->spop($this->key, $count);
     }
+
+    /**
+     * @param $member
+     * @return bool
+     */
+    public function has($member)
+    {
+        return (bool)$this->client->sismember($this->key, json_encode($member));
+    }
 }

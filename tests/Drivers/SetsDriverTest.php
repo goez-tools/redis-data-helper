@@ -131,4 +131,22 @@ class SetsDriverTest extends TestCase
         $driver->pop(3);
         $this->assertEquals(2, $driver->count());
     }
+
+    /**
+     * @test
+     */
+    public function it_should_check_member_in_sets()
+    {
+        $key = $this->assembleKey('example');
+        $list = [
+            '"111111"',
+            '"222222"',
+        ];
+        $this->testRedisClient->sadd($key, $list);
+
+        $driver = (new SetsDriver($this->testRedisClient))->key($key);
+        $this->assertTrue($driver->has('111111'));
+        $this->assertFalse($driver->has('333333'));
+    }
+
 }
