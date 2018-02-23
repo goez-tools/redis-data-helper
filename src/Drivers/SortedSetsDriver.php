@@ -85,6 +85,16 @@ class SortedSetsDriver extends AbstractDriver
 
     /**
      * @param $member
+     * @return bool
+     */
+    public function has($member)
+    {
+        return null !== $this->client->zrank($this->key, json_encode($member));
+    }
+
+    /**
+     * @param $member
+     * @return int
      */
     public function remove($member)
     {

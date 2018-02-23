@@ -209,6 +209,22 @@ class SortedSetsDriverTest extends TestCase
     /**
      * @test
      */
+    public function it_should_check_member_in_sorted_sets()
+    {
+        $key = $this->assembleKey('example');
+        $list = [
+            '"111111"' => 123,
+        ];
+        $this->testRedisClient->zadd($key, $list);
+
+        $driver = (new SortedSetsDriver($this->testRedisClient))->key($key);
+        $this->assertTrue($driver->has('111111'));
+        $this->assertFalse($driver->has('333333'));
+    }
+
+    /**
+     * @test
+     */
     public function it_should_remove_item()
     {
         $key = $this->assembleKey('example');
