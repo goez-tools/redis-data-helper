@@ -60,4 +60,13 @@ class SetsDriver extends AbstractDriver
     {
         return (bool)$this->client->sismember($this->key, json_encode($member));
     }
+
+    /**
+     * @param $member
+     * @return int
+     */
+    public function remove($member)
+    {
+        return $this->client->srem($this->key, json_encode($member));
+    }
 }

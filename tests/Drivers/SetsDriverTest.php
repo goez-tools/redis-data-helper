@@ -149,4 +149,20 @@ class SetsDriverTest extends TestCase
         $this->assertFalse($driver->has('333333'));
     }
 
+    /**
+     * @test
+     */
+    public function it_should_remove_member_in_sets()
+    {
+        $key = $this->assembleKey('example');
+        $list = [
+            '"111111"',
+            '"222222"',
+        ];
+        $this->testRedisClient->sadd($key, $list);
+
+        $driver = (new SetsDriver($this->testRedisClient))->key($key);
+        $this->assertEquals(1, $driver->remove('111111'));
+    }
+
 }
