@@ -88,4 +88,16 @@ class StringDriverTest extends TestCase
         $driver->set(123);
         $this->assertTrue($driver->exists());
     }
+
+    /**
+     * @test
+     */
+    public function it_should_be_deleted()
+    {
+        $key = $this->assembleKey('example');
+        $this->testRedisClient->set($key, '"123456"');
+        $driver = new StringDriver($this->testRedisClient);
+        $this->assertEquals(1, $driver->key($key)->delete());
+    }
+
 }

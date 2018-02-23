@@ -46,4 +46,12 @@ abstract class AbstractDriver
     {
         return (bool)$this->client->exists($this->key);
     }
+
+    /**
+     * @return int
+     */
+    public function delete()
+    {
+        return $this->client->del([$this->key]);
+    }
 }
