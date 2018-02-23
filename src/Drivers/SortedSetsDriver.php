@@ -88,6 +88,6 @@ class SortedSetsDriver extends AbstractDriver
      */
     public function remove($member)
     {
-        $this->client->zrem($this->key, json_encode($member));
+        return $this->client->zrem($this->key, json_encode($member));
     }
 }

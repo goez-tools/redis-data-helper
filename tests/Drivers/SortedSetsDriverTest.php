@@ -222,7 +222,7 @@ class SortedSetsDriverTest extends TestCase
         ]);
 
         $driver = new SortedSetsDriver($this->testRedisClient);
-        $driver->key($key)->remove('abc');
+        $this->assertEquals(1, $driver->key($key)->remove('abc'));
 
         $actual = $this->testRedisClient->zrange($key, 0, -1, 'withscores');
         $this->assertEquals($expected, $actual);
