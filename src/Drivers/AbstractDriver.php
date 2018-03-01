@@ -54,4 +54,14 @@ abstract class AbstractDriver
     {
         return $this->client->del([$this->key]);
     }
+
+    /**
+     * @param $timestamp
+     * @return AbstractDriver|StringDriver|SetsDriver|SortedSetsDriver|MultiDriver
+     */
+    public function expireAt($timestamp)
+    {
+        $this->client->expireat($this->key, $timestamp);
+        return $this;
+    }
 }

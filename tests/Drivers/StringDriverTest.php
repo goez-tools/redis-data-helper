@@ -2,6 +2,7 @@
 
 namespace Tests\Drivers;
 
+use Carbon\Carbon;
 use Goez\RedisDataHelper\Drivers\StringDriver;
 use PHPUnit_Framework_TestCase as TestCase;
 use Tests\InitTestRedisClient;
@@ -98,6 +99,21 @@ class StringDriverTest extends TestCase
         $this->testRedisClient->set($key, '"123456"');
         $driver = new StringDriver($this->testRedisClient);
         $this->assertEquals(1, $driver->key($key)->delete());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_expire_at_given_timestamp()
+    {
+        $key = $this->assembleKey('example');
+        $timestamp = Carbon::now()->subSecond()->timestamp;
+
+        /** @var StringDriver $driver */
+        $driver = new StringDriver($this->testRedisClient);
+        $driver->key($key)->set('123');
+        $driver->expireAt($timestamp);
+        $this->assertFalse($driver->exists());
     }
 
 }
