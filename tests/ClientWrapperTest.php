@@ -7,7 +7,7 @@ use Goez\RedisDataHelper\Drivers\MultiDriver;
 use Goez\RedisDataHelper\Drivers\SetsDriver;
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 
 class ClientWrapperTest extends TestCase
 {

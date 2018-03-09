@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Goez\RedisDataHelper\Drivers\AbstractDriver;
 use Predis\Client;
 
 /**
