@@ -35,7 +35,9 @@ class SetsDriverTest extends TestCase
 
         $actual = $this->testRedisClient->smembers($key);
 
-        $this->assertEquals(sort($expected), sort($actual));
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -60,7 +62,10 @@ class SetsDriverTest extends TestCase
         $actual = $driver->key($key)->getList();
 
         $this->assertEquals(3, $driver->count());
-        $this->assertEquals(sort($expected), sort($actual));
+
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
     }
 
     /**

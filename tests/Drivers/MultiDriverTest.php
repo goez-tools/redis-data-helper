@@ -66,8 +66,10 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key($keyPattern)->get();
-        $this->assertEquals(sort($expected), sort($result));
+        $actual = $driver->key($keyPattern)->get();
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
