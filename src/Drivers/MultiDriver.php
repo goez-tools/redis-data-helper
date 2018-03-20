@@ -47,7 +47,9 @@ class MultiDriver extends AbstractDriver
         $keys = is_array($this->key) ?
             $this->key :
             $this->client->keys((string)$this->key);
-
+        if (empty($keys)) {
+            return [];
+        }
         $result = $this->client->mget($keys);
         $values = array_map(function ($item) use ($callback) {
             $value = json_decode($item, true);

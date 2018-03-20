@@ -106,6 +106,17 @@ class MultiDriverTest extends TestCase
     /**
      * @test
      */
+    public function it_should_get_an_empty_array_with_a_not_existing_key()
+    {
+        $expected = [];
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->key('example:*')->get();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_get_null_array()
     {
         $expected = [null, null, null,];
