@@ -95,7 +95,7 @@ class MultiDriverTest extends TestCase
     /**
      * @test
      */
-    public function it_should_get_empty_array()
+    public function it_should_get_an_empty_array()
     {
         $expected = [];
         $driver = new MultiDriver($this->testRedisClient);
