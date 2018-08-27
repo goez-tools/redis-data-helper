@@ -121,9 +121,9 @@ class MultiDriverTest extends TestCase
         $expected = [null, null, null,];
         $driver = new MultiDriver($this->testRedisClient);
         $result = $driver->key([
-            'abc',
-            'def',
-            'ghi',
+            $this->assembleKey('abc'),
+            $this->assembleKey('def'),
+            $this->assembleKey('ghi'),
         ])->get();
         $this->assertEquals($expected, $result);
     }
