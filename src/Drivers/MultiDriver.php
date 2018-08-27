@@ -59,6 +59,7 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
+     * @deprecated
      * @param \Closure $callback
      */
     public function transact(\Closure $callback)
