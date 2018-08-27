@@ -151,4 +151,49 @@ class MultiDriverTest extends TestCase
         $result = $driver->key($keys)->withKey()->get();
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_get_keys_count()
+    {
+        $keys = [
+            $this->assembleKey('abc'),
+            $this->assembleKey('def'),
+            $this->assembleKey('ghi'),
+        ];
+        $expected = 3;
+
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->key($keys)->count();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_get_zero()
+    {
+        $keys = [];
+        $expected = 0;
+
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->key($keys)->count();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_get_one()
+    {
+        $key = 'example';
+        $expected = 1;
+
+        $this->testRedisClient->set($key, 1);
+
+        $driver = new MultiDriver($this->testRedisClient);
+        $result = $driver->key($key)->count();
+        $this->assertEquals($expected, $result);
+    }
 }

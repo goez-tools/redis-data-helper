@@ -44,9 +44,7 @@ class MultiDriver extends AbstractDriver
         if (empty($this->key)) {
             return [];
         }
-        $keys = is_array($this->key) ?
-            $this->key :
-            $this->client->keys((string)$this->key);
+        $keys = $this->getKeys($this->key);
         if (empty($keys)) {
             return [];
         }
@@ -56,6 +54,26 @@ class MultiDriver extends AbstractDriver
             return is_callable($callback) ? $callback($value) : $value;
         }, $result);
         return $this->withKey ? array_combine($this->key, $values) : $values;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        $keys = (array)$this->getKeys($this->key);
+        return count($keys);
+    }
+
+    /**
+     * @param array|string $key
+     * @return array|string
+     */
+    private function getKeys($key)
+    {
+        return is_array($key) ?
+            $key :
+            $this->client->keys((string)$key);
     }
 
     /**
