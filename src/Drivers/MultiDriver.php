@@ -63,8 +63,7 @@ class MultiDriver extends AbstractDriver
      */
     public function transact(\Closure $callback)
     {
-        $this->client->multi();
-        $callback(new ClientWrapper($this->client));
-        $this->client->exec();
+        $clientWrapper = new ClientWrapper($this->client);
+        $clientWrapper->transact($callback);
     }
 }

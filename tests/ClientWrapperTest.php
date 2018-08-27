@@ -26,4 +26,26 @@ class ClientWrapperTest extends TestCase
         $this->assertInstanceOf(SortedSetsDriver::class, $wrapper->sortedSets('abc'));
         $this->assertInstanceOf(MultiDriver::class, $wrapper->multi('abc'));
     }
+
+    /**
+     * @test
+     */
+    public function it_should_run_multiple_command()
+    {
+        $keys = [
+            $this->assembleKey('abc'),
+            $this->assembleKey('def'),
+            $this->assembleKey('ghi'),
+        ];
+
+        $wrapper = new ClientWrapper($this->testRedisClient);
+        $expected = [1, 2, 3,];
+        $wrapper->transact(function (ClientWrapper $clientWrapper) use ($keys) {
+            $clientWrapper->string($keys[0])->set(1);
+            $clientWrapper->string($keys[1])->set(2);
+            $clientWrapper->string($keys[2])->set(3);
+        });
+        $actual = $this->testRedisClient->mget($keys);
+        $this->assertEquals($expected, $actual);
+    }
 }

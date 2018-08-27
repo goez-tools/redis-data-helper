@@ -2,7 +2,6 @@
 
 namespace Tests\Drivers;
 
-use Goez\RedisDataHelper\ClientWrapper;
 use Goez\RedisDataHelper\Drivers\MultiDriver;
 use PHPUnit_Framework_TestCase as TestCase;
 use Tests\InitTestRedisClient;
@@ -151,27 +150,5 @@ class MultiDriverTest extends TestCase
         $driver = new MultiDriver($this->testRedisClient);
         $result = $driver->key($keys)->withKey()->get();
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function it_should_run_multiple_command()
-    {
-        $keys = [
-            $this->assembleKey('abc'),
-            $this->assembleKey('def'),
-            $this->assembleKey('ghi'),
-        ];
-
-        $driver = new MultiDriver($this->testRedisClient);
-        $expected = [1, 2, 3,];
-        $driver->transact(function (ClientWrapper $clientWrapper) use ($keys) {
-            $clientWrapper->string($keys[0])->set(1);
-            $clientWrapper->string($keys[1])->set(2);
-            $clientWrapper->string($keys[2])->set(3);
-        });
-        $actual = $this->testRedisClient->mget($keys);
-        $this->assertEquals($expected, $actual);
     }
 }

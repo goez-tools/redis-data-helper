@@ -67,4 +67,14 @@ class ClientWrapper
         $driver = new MultiDriver($this->client);
         return $driver->key($keys);
     }
+
+    /**
+     * @param \Closure $callback
+     */
+    public function transact(\Closure $callback)
+    {
+        $this->client->multi();
+        $callback(new static($this->client));
+        $this->client->exec();
+    }
 }
