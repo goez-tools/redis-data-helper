@@ -6,6 +6,7 @@ use Goez\RedisDataHelper\Drivers\MultiDriver;
 use Goez\RedisDataHelper\Drivers\SetsDriver;
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
+use Goez\RedisDataHelper\Drivers\HashDriver;
 use Predis\Client;
 
 /**
@@ -55,6 +56,16 @@ class ClientWrapper
     public function sortedSets($key)
     {
         $driver = new SortedSetsDriver($this->client);
+        return $driver->key($key);
+    }
+
+    /**
+     * @param $key
+     * @return HashDriver
+     */
+    public function hash($key)
+    {
+        $driver = new HashDriver($this->client);
         return $driver->key($key);
     }
 
