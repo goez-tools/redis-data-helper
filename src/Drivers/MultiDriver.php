@@ -61,7 +61,7 @@ class MultiDriver extends AbstractDriver
             $value = json_decode($item, true);
             return is_callable($callback) ? $callback($value) : $value;
         }, $result);
-        return $this->withKey ? array_combine($this->key, $values) : $values;
+        return $this->withKey ? array_combine($keys, $values) : $values;
     }
 
     /**
