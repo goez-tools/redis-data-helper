@@ -36,6 +36,14 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
+     * @return array|string
+     */
+    public function keys()
+    {
+        return $this->getKeys($this->key);
+    }
+
+    /**
      * @param callable|null $callback
      * @return array
      */
