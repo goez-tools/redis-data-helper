@@ -84,8 +84,8 @@ class ClientWrapper
      */
     public function transact(\Closure $callback)
     {
-        $this->client->multi();
-        $callback(new static($this->client));
-        $this->client->exec();
+        $this->client->transaction(function ($client) use ($callback) {
+            $callback(new static($this->client));
+        });
     }
 }
