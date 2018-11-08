@@ -3,6 +3,7 @@
 namespace Goez\RedisDataHelper\Drivers;
 
 use Predis\Client;
+use Predis\Transaction\MultiExec;
 
 /**
  * Class BaseDriver
@@ -22,9 +23,9 @@ abstract class AbstractDriver
 
     /**
      * AbstractDriver constructor.
-     * @param Client $client
+     * @param MultiExec|Client $client
      */
-    public function __construct(Client $client)
+    public function __construct($client)
     {
         $this->client = $client;
     }
