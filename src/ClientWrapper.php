@@ -8,7 +8,6 @@ use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
 use Goez\RedisDataHelper\Drivers\HashDriver;
 use Predis\Client;
-use Predis\Transaction\MultiExec;
 
 /**
  * Class ClientWrapper
@@ -23,9 +22,9 @@ class ClientWrapper
 
     /**
      * ClientWrapper constructor.
-     * @param MultiExec|Client $client
+     * @param Client $client
      */
-    public function __construct($client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }
@@ -85,8 +84,8 @@ class ClientWrapper
      */
     public function transact(\Closure $callback)
     {
-        $this->client->transaction(function ($multiExec) use ($callback) {
-            $callback(new static($multiExec));
-        });
+        $this->client->multi();
+        $callback(new static($this->client));
+        $this->client->exec();
     }
 }
