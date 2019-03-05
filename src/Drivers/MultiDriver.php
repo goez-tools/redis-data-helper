@@ -119,4 +119,42 @@ class MultiDriver extends AbstractDriver
 
         return $this->client->scan($cursor, $options);
     }
+
+    /**
+     * @param $countOfEachScan
+     * @return array
+     */
+    public function scanAll($countOfEachScan)
+    {
+        if (empty($this->key)) {
+            return [];
+        }
+
+        $cursor = '0';
+        $bufferArray = [];
+
+        do {
+            list($cursor, $result) = $this->scan($cursor, $countOfEachScan);
+            $bufferArray[] = $result;
+        } while ($cursor !== '0');
+
+        return $this->flattenArray($bufferArray);
+    }
+
+    /**
+     * flatten 2D array into 1D array
+     * @param $array
+     * @return array
+     */
+    private function flattenArray($array)
+    {
+        $result = [];
+        foreach ($array as $item) {
+            foreach ($item as $value) {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
+    }
 }
