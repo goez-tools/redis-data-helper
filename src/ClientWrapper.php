@@ -89,14 +89,4 @@ class ClientWrapper
         $callback(new static($this->client));
         $this->client->exec();
     }
-
-    /**
-     * @param $pattern
-     * @return ScanDriver
-     */
-    public function scan($pattern)
-    {
-        $driver = new ScanDriver($this->client);
-        return $driver->key($pattern);
-    }
 }

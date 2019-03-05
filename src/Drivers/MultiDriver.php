@@ -65,6 +65,28 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
+     * @param $cursor
+     * @param $count
+     * @return array
+     * [
+     *     '5',
+     *     [
+     *         'find_key_1',
+     *         'find_key_2',
+     *     ],
+     * ]
+     */
+    public function scan($cursor, $count)
+    {
+        $options = [
+            'MATCH' => $this->key,
+            'COUNT' => $count,
+        ];
+
+        return $this->client->scan($cursor, $options);
+    }
+
+    /**
      * @return int
      */
     public function count()
