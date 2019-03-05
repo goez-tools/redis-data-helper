@@ -282,15 +282,31 @@ class MultiDriverTest extends TestCase
     }
 
     /**
-     * ??
+     * @test
      */
-    public function it_should_get_empty_response()
+    public function it_should_scan_nothing_if_pattern_not_found()
     {
+        $keyPattern = $this->assembleKey('http');
+        $key1 = $this->assembleKey('www');
+        $key2 = $this->assembleKey('com');
+
+        $keys = [
+            $key1,
+            $key2,
+        ];
+        $this->testRedisClient->set($keys[0], 1);
+        $this->testRedisClient->set($keys[1], 2);
         $expected = [];
+        $actual = [];
         $cursor = '0';
         $count = 1;
-        $driver = new ScanDriver($this->testRedisClient);
-        list($cursor, $actual) = $driver->exec($cursor, $count);
+        $driver = new MultiDriver($this->testRedisClient);
+        do {
+            list($cursor, $result) = $driver->key($keyPattern)->scan($cursor, $count);
+            foreach ($result as $key) {
+                $actual[] = $key;
+            }
+        } while ($cursor !== '0');
         $this->assertEquals($expected, $actual);
     }
 }

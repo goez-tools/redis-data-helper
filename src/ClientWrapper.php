@@ -3,7 +3,6 @@
 namespace Goez\RedisDataHelper;
 
 use Goez\RedisDataHelper\Drivers\MultiDriver;
-use Goez\RedisDataHelper\Drivers\ScanDriver;
 use Goez\RedisDataHelper\Drivers\SetsDriver;
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
