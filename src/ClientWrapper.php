@@ -3,6 +3,7 @@
 namespace Goez\RedisDataHelper;
 
 use Goez\RedisDataHelper\Drivers\MultiDriver;
+use Goez\RedisDataHelper\Drivers\ScanDriver;
 use Goez\RedisDataHelper\Drivers\SetsDriver;
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
@@ -87,5 +88,15 @@ class ClientWrapper
         $this->client->multi();
         $callback(new static($this->client));
         $this->client->exec();
+    }
+
+    /**
+     * @param $pattern
+     * @return ScanDriver
+     */
+    public function scan($pattern)
+    {
+        $driver = new ScanDriver($this->client);
+        return $driver->key($pattern);
     }
 }
