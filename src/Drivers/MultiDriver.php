@@ -65,28 +65,6 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
-     * @param $cursor
-     * @param $count
-     * @return array
-     * [
-     *     '5',
-     *     [
-     *         'find_key_1',
-     *         'find_key_2',
-     *     ],
-     * ]
-     */
-    public function scan($cursor, $count)
-    {
-        $options = [
-            'MATCH' => $this->key,
-            'COUNT' => $count,
-        ];
-
-        return $this->client->scan($cursor, $options);
-    }
-
-    /**
      * @return int
      */
     public function count()
@@ -114,5 +92,31 @@ class MultiDriver extends AbstractDriver
     {
         $clientWrapper = new ClientWrapper($this->client);
         $clientWrapper->transact($callback);
+    }
+
+    /**
+     * @param $cursor
+     * @param $count
+     * @return array
+     * [
+     *     '5',
+     *     [
+     *         'find_key_1',
+     *         'find_key_2',
+     *     ],
+     * ]
+     */
+    public function scan($cursor, $count)
+    {
+        if (empty($this->key)) {
+            return [];
+        }
+
+        $options = [
+            'MATCH' => $this->key,
+            'COUNT' => $count,
+        ];
+
+        return $this->client->scan($cursor, $options);
     }
 }
