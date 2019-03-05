@@ -238,7 +238,7 @@ class MultiDriverTest extends TestCase
      */
     public function it_should_get_one()
     {
-        $key = 'example';
+        $key = $this->assembleKey('example');
         $expected = 1;
 
         $this->testRedisClient->set($key, 1);
