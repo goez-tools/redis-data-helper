@@ -315,7 +315,6 @@ class MultiDriverTest extends TestCase
         $keyPattern = $this->assembleKey('http');
         $key1 = $this->assembleKey('www');
         $key2 = $this->assembleKey('com');
-
         $keys = [
             $key1,
             $key2,
@@ -323,16 +322,8 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[0], 1);
         $this->testRedisClient->set($keys[1], 2);
         $expected = [];
-        $actual = [];
-        $cursor = '0';
-        $count = 1;
         $driver = new MultiDriver($this->testRedisClient);
-        do {
-            list($cursor, $result) = $driver->key($keyPattern)->scan($cursor, $count);
-            foreach ($result as $key) {
-                $actual[] = $key;
-            }
-        } while ($cursor !== '0');
+        $actual = $driver->key($keyPattern)->scanAll(1);
         $this->assertEquals($expected, $actual);
     }
 }
