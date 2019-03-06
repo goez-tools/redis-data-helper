@@ -238,7 +238,7 @@ class MultiDriverTest extends TestCase
      */
     public function it_should_get_one()
     {
-        $key = 'example';
+        $key = $this->assembleKey('example');
         $expected = 1;
 
         $this->testRedisClient->set($key, 1);
@@ -246,5 +246,84 @@ class MultiDriverTest extends TestCase
         $driver = new MultiDriver($this->testRedisClient);
         $result = $driver->key($key)->count();
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_find_keys_by_scan()
+    {
+        $keyPattern = $this->assembleKey('*');
+        $key1 = $this->assembleKey('abc');
+        $key2 = $this->assembleKey('def');
+        $key3 = $this->assembleKey('ghi');
+        $keys = [
+            $key1,
+            $key2,
+            $key3,
+        ];
+        $expected = $keys;
+        $this->testRedisClient->set($keys[0], 1);
+        $this->testRedisClient->set($keys[1], 2);
+        $this->testRedisClient->set($keys[2], 3);
+
+        $driver = new MultiDriver($this->testRedisClient);
+        $cursor = '0';
+        $actual = [];
+        do {
+            list($cursor, $results) = $driver->key($keyPattern)->scan($cursor, 1);
+            foreach ($results as $key) {
+                $actual[] = $key;
+            }
+        } while ($cursor !== '0');
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_scan_all_keys()
+    {
+        $keyPattern = $this->assembleKey('*');
+        $key1 = $this->assembleKey('abc');
+        $key2 = $this->assembleKey('def');
+        $key3 = $this->assembleKey('ghi');
+        $keys = [
+            $key1,
+            $key2,
+            $key3,
+        ];
+        $expected = $keys;
+        $this->testRedisClient->set($keys[0], 1);
+        $this->testRedisClient->set($keys[1], 2);
+        $this->testRedisClient->set($keys[2], 3);
+
+        $driver = new MultiDriver($this->testRedisClient);
+        $actual = $driver->key($keyPattern)->scanAll(1);
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_scan_nothing_if_pattern_not_found()
+    {
+        $keyPattern = $this->assembleKey('http');
+        $key1 = $this->assembleKey('www');
+        $key2 = $this->assembleKey('com');
+        $keys = [
+            $key1,
+            $key2,
+        ];
+        $this->testRedisClient->set($keys[0], 1);
+        $this->testRedisClient->set($keys[1], 2);
+        $expected = [];
+        $driver = new MultiDriver($this->testRedisClient);
+        $actual = $driver->key($keyPattern)->scanAll(1);
+        $this->assertEquals($expected, $actual);
     }
 }
