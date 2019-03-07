@@ -52,14 +52,14 @@ class SortedSetsDriver extends AbstractDriver
     public function getList($count = -1)
     {
         $start = ($count > 0) ? -$count : 0;
-        $list = $this->client->zrange($this->key, $start, -1, 'withscores');
+        $list = $this->client->zrange($this->key, $start, -1, ['WITHSCORES' => true]);
         if (is_callable($this->closure)) {
             return call_user_func($this->closure, $list);
         }
 
         $result = [];
         foreach ($list as $value => $score) {
-            $result[json_decode($value, true)] = (int)$score;
+            $result[$this->getKey($value)] = (int)$score;
         }
         return $result;
     }
@@ -71,16 +71,30 @@ class SortedSetsDriver extends AbstractDriver
     public function getReversedList($count = -1)
     {
         $stop = $count === -1 ? $count : $count - 1;
-        $list = $this->client->zrevrange($this->key, 0, $stop, 'withscores');
+        $list = $this->client->zrevrange($this->key, 0, $stop, ['WITHSCORES' => true]);
         if (is_callable($this->closure)) {
             return call_user_func($this->closure, $list);
         }
 
         $result = [];
         foreach ($list as $value => $score) {
-            $result[json_decode($value, true)] = (int)$score;
+            $result[$this->getKey($value)] = (int)$score;
         }
         return $result;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return false|mixed|string
+     */
+    private function getKey($value)
+    {
+        $key = json_decode($value, true);
+        if (is_array($key)) {
+            return json_encode($value);
+        }
+        return $key;
     }
 
     /**
