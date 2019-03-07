@@ -2,14 +2,19 @@
 
 namespace Goez\RedisDataHelper\Drivers;
 
-use Goez\RedisDataHelper\ClientWrapper;
-
 class MultiDriver extends AbstractDriver
 {
     /**
      * @var bool
      */
     private $withKey = false;
+
+    /**
+     * 每次 SCAN 時的 COUNT 數
+     *
+     * @var int
+     */
+    private $countPerScan;
 
     /**
      * @return MultiDriver
@@ -21,14 +26,37 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
+     * @param $number
+     * @return MultiDriver
+     */
+    public function countPerScan($number)
+    {
+        $this->countPerScan = (int) $number;
+        return $this;
+    }
+
+    /**
+     * 取得設定的 countPerScan，不存在則用 ({key 總數量} / 5)
      *
+     * @return int
+     */
+    private function getCountPerScan()
+    {
+        if (!$this->countPerScan) {
+            // default value
+            $totalKeys = $this->client->dbsize();
+            return ceil($totalKeys / 6);
+        }
+
+        return $this->countPerScan;
+    }
+
+    /**
      * @return int
      */
     public function delete()
     {
-        $keys = !is_array($this->key) ?
-            $this->client->keys((string)$this->key) :
-            $this->key;
+        $keys = $this->getKeys();
         if (!empty($keys)) {
             return $this->client->del($keys);
         }
@@ -36,11 +64,11 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
-     * @return array|string
+     * @return array
      */
     public function keys()
     {
-        return $this->getKeys($this->key);
+        return $this->getKeys();
     }
 
     /**
@@ -49,10 +77,7 @@ class MultiDriver extends AbstractDriver
      */
     public function get(callable $callback = null)
     {
-        if (empty($this->key)) {
-            return [];
-        }
-        $keys = $this->getKeys($this->key);
+        $keys = $this->getKeys();
         if (empty($keys)) {
             return [];
         }
@@ -69,72 +94,41 @@ class MultiDriver extends AbstractDriver
      */
     public function count()
     {
-        $keys = (array)$this->getKeys($this->key);
+        $keys = (array) $this->getKeys();
         return count($keys);
     }
 
     /**
-     * @param array|string $key
-     * @return array|string
-     */
-    private function getKeys($key)
-    {
-        return is_array($key) ?
-            $key :
-            $this->client->keys((string)$key);
-    }
-
-    /**
-     * @deprecated
-     * @param \Closure $callback
-     */
-    public function transact(\Closure $callback)
-    {
-        $clientWrapper = new ClientWrapper($this->client);
-        $clientWrapper->transact($callback);
-    }
-
-    /**
-     * @param $cursor
-     * @param $count
-     * @return array
-     * [
-     *     '5',
-     *     [
-     *         'find_key_1',
-     *         'find_key_2',
-     *     ],
-     * ]
-     */
-    public function scan($cursor, $count)
-    {
-        if (empty($this->key)) {
-            return [];
-        }
-
-        $options = [
-            'MATCH' => $this->key,
-            'COUNT' => $count,
-        ];
-
-        return $this->client->scan($cursor, $options);
-    }
-
-    /**
-     * @param $countOfEachScan
+     * Get target keys (array) or search by pattern (string)
+     *
      * @return array
      */
-    public function scanAll($countOfEachScan)
+    private function getKeys()
     {
+        return is_array($this->key) ?
+            $this->key :
+            $this->scanAll();
+    }
+
+    /**
+     * @return array
+     */
+    private function scanAll()
+    {
+        $countPerScan = $this->getCountPerScan();
         if (empty($this->key)) {
             return [];
         }
 
         $cursor = '0';
         $bufferArray = [];
+        $options = [
+            'MATCH' => $this->key,
+            'COUNT' => $countPerScan,
+        ];
 
         do {
-            list($cursor, $result) = $this->scan($cursor, $countOfEachScan);
+            list($cursor, $result) = $this->client->scan($cursor, $options);
             $bufferArray[] = $result;
         } while ($cursor !== '0');
 
@@ -142,7 +136,7 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
-     * flatten 2D array into 1D array
+     * Flatten 2D array into 1D array
      * @param $array
      * @return array
      */
