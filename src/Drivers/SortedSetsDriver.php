@@ -59,7 +59,7 @@ class SortedSetsDriver extends AbstractDriver
 
         $result = [];
         foreach ($list as $value => $score) {
-            $result[json_decode($value, true)] = (int)$score;
+            $result[$this->getKey($value)] = (int)$score;
         }
         return $result;
     }
@@ -78,9 +78,23 @@ class SortedSetsDriver extends AbstractDriver
 
         $result = [];
         foreach ($list as $value => $score) {
-            $result[json_decode($value, true)] = (int)$score;
+            $result[$this->getKey($value)] = (int)$score;
         }
         return $result;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return false|mixed|string
+     */
+    private function getKey($value)
+    {
+        $key = json_decode($value, true);
+        if (is_array($key)) {
+            return json_encode($value);
+        }
+        return $key;
     }
 
     /**
