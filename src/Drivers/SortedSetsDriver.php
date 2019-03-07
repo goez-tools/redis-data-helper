@@ -52,7 +52,7 @@ class SortedSetsDriver extends AbstractDriver
     public function getList($count = -1)
     {
         $start = ($count > 0) ? -$count : 0;
-        $list = $this->client->zrange($this->key, $start, -1, 'withscores');
+        $list = $this->client->zrange($this->key, $start, -1, ['WITHSCORES' => true]);
         if (is_callable($this->closure)) {
             return call_user_func($this->closure, $list);
         }
@@ -71,7 +71,7 @@ class SortedSetsDriver extends AbstractDriver
     public function getReversedList($count = -1)
     {
         $stop = $count === -1 ? $count : $count - 1;
-        $list = $this->client->zrevrange($this->key, 0, $stop, 'withscores');
+        $list = $this->client->zrevrange($this->key, 0, $stop, ['WITHSCORES' => true]);
         if (is_callable($this->closure)) {
             return call_user_func($this->closure, $list);
         }
