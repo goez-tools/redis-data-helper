@@ -2,6 +2,8 @@
 
 namespace Goez\RedisDataHelper\Drivers;
 
+use InvalidArgumentException;
+
 class MultiDriver extends AbstractDriver
 {
     /**
@@ -36,18 +38,18 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
-     * 取得設定的 countPerScan，不存在則用 ({key 總數量} / 5)
+     * 取得設定的 countPerScan，不存在則拋出 exception
+     * 因 predis library replication mode 不支援 `dbsize` 指令，無法動態計算
+     * 避免忽略此參數，因此不給預設值，使用時一定要給 countPerScan 參數
      *
      * @return int
+     * @throws InvalidArgumentException
      */
     private function getCountPerScan()
     {
         if (!$this->countPerScan) {
-            // default value
-            $totalKeys = $this->client->dbsize();
-            return ceil($totalKeys / 6);
+            throw new InvalidArgumentException('Parameter countPerScan is required');
         }
-
         return $this->countPerScan;
     }
 
