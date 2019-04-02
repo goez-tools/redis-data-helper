@@ -13,7 +13,7 @@ class ClientWrapperTest extends TestCase
 {
     use InitTestRedisClient;
 
-    protected $keyPrefix = 'testing:';
+    protected $keyPrefix = '';
 
     /**
      * @test
