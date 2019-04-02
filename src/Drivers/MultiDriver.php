@@ -2,7 +2,7 @@
 
 namespace Goez\RedisDataHelper\Drivers;
 
-use InvalidArgumentException;
+use Goez\RedisDataHelper\ClientWrapper;
 
 class MultiDriver extends AbstractDriver
 {
@@ -10,13 +10,6 @@ class MultiDriver extends AbstractDriver
      * @var bool
      */
     private $withKey = false;
-
-    /**
-     * 每次 SCAN 時的 COUNT 數
-     *
-     * @var int
-     */
-    private $countPerScan;
 
     /**
      * @return MultiDriver
@@ -28,37 +21,14 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
-     * @param $number
-     * @return MultiDriver
-     */
-    public function countPerScan($number)
-    {
-        $this->countPerScan = (int) $number;
-        return $this;
-    }
-
-    /**
-     * 取得設定的 countPerScan，不存在則拋出 exception
-     * 因 predis library replication mode 不支援 `dbsize` 指令，無法動態計算
-     * 避免忽略此參數，因此不給預設值，使用時一定要給 countPerScan 參數
      *
-     * @return int
-     * @throws InvalidArgumentException
-     */
-    private function getCountPerScan()
-    {
-        if (!$this->countPerScan) {
-            throw new InvalidArgumentException('Parameter countPerScan is required');
-        }
-        return $this->countPerScan;
-    }
-
-    /**
      * @return int
      */
     public function delete()
     {
-        $keys = $this->getKeys();
+        $keys = !is_array($this->key) ?
+            $this->client->keys((string)$this->key) :
+            $this->key;
         if (!empty($keys)) {
             return $this->client->del($keys);
         }
@@ -66,11 +36,11 @@ class MultiDriver extends AbstractDriver
     }
 
     /**
-     * @return array
+     * @return array|string
      */
     public function keys()
     {
-        return $this->getKeys();
+        return $this->getKeys($this->key);
     }
 
     /**
@@ -79,7 +49,10 @@ class MultiDriver extends AbstractDriver
      */
     public function get(callable $callback = null)
     {
-        $keys = $this->getKeys();
+        if (empty($this->key)) {
+            return [];
+        }
+        $keys = $this->getKeys($this->key);
         if (empty($keys)) {
             return [];
         }
@@ -96,61 +69,28 @@ class MultiDriver extends AbstractDriver
      */
     public function count()
     {
-        $keys = (array) $this->getKeys();
+        $keys = (array)$this->getKeys($this->key);
         return count($keys);
     }
 
     /**
-     * Get target keys (array) or search by pattern (string)
-     *
-     * @return array
+     * @param array|string $key
+     * @return array|string
      */
-    private function getKeys()
+    private function getKeys($key)
     {
-        return is_array($this->key) ?
-            $this->key :
-            $this->scanAll();
+        return is_array($key) ?
+            $key :
+            $this->client->keys((string)$key);
     }
 
     /**
-     * @return array
+     * @deprecated
+     * @param \Closure $callback
      */
-    private function scanAll()
+    public function transact(\Closure $callback)
     {
-        $countPerScan = $this->getCountPerScan();
-        if (empty($this->key)) {
-            return [];
-        }
-
-        $cursor = '0';
-        $bufferArray = [];
-        $options = [
-            'MATCH' => $this->key,
-            'COUNT' => $countPerScan,
-        ];
-
-        do {
-            list($cursor, $result) = $this->client->scan($cursor, $options);
-            $bufferArray[] = $result;
-        } while ($cursor !== '0');
-
-        return $this->flattenArray($bufferArray);
-    }
-
-    /**
-     * Flatten 2D array into 1D array
-     * @param $array
-     * @return array
-     */
-    private function flattenArray($array)
-    {
-        $result = [];
-        foreach ($array as $item) {
-            foreach ($item as $value) {
-                $result[] = $value;
-            }
-        }
-
-        return $result;
+        $clientWrapper = new ClientWrapper($this->client);
+        $clientWrapper->transact($callback);
     }
 }

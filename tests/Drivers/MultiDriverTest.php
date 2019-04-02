@@ -21,7 +21,7 @@ class MultiDriverTest extends TestCase
     public function it_should_delete_nothing()
     {
         $driver = new MultiDriver($this->testRedisClient);
-        $count = $driver->key('nothing')->countPerScan(1)->delete();
+        $count = $driver->key('nothing')->delete();
         $this->assertEquals(0, $count);
     }
 
@@ -44,7 +44,7 @@ class MultiDriverTest extends TestCase
         $this->assertCount(3, $result);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $count = $driver->key($keyPattern)->countPerScan(1)->delete();
+        $count = $driver->key($keyPattern)->delete();
         $this->assertEquals(3, $count);
     }
 
@@ -65,7 +65,7 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $actual = $driver->key($keyPattern)->countPerScan(1)->get();
+        $actual = $driver->key($keyPattern)->get();
         sort($expected);
         sort($actual);
         $this->assertEquals($expected, $actual);
@@ -87,7 +87,7 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key($keys)->countPerScan(1)->get();
+        $result = $driver->key($keys)->get();
         $this->assertEquals($expected, $result);
     }
 
@@ -98,7 +98,7 @@ class MultiDriverTest extends TestCase
     {
         $expected = [];
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->countPerScan(1)->get();
+        $result = $driver->get();
         $this->assertEquals($expected, $result);
     }
 
@@ -109,7 +109,7 @@ class MultiDriverTest extends TestCase
     {
         $expected = [];
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key('example:*')->countPerScan(1)->get();
+        $result = $driver->key('example:*')->get();
         $this->assertEquals($expected, $result);
     }
 
@@ -124,7 +124,7 @@ class MultiDriverTest extends TestCase
             $this->assembleKey('abc'),
             $this->assembleKey('def'),
             $this->assembleKey('ghi'),
-        ])->countPerScan(1)->get();
+        ])->get();
         $this->assertEquals($expected, $result);
     }
 
@@ -148,7 +148,7 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key('testing:*')->countPerScan(1)->keys();
+        $result = $driver->key('testing:*')->keys();
 
         sort($expected);
         sort($result);
@@ -175,7 +175,7 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key($keys)->countPerScan(1)->withKey()->get();
+        $result = $driver->key($keys)->withKey()->get();
         $this->assertEquals($expected, $result);
     }
 
@@ -199,7 +199,7 @@ class MultiDriverTest extends TestCase
         $this->testRedisClient->set($keys[2], 3);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key('testing:*')->countPerScan(1)->withKey()->get();
+        $result = $driver->key('testing:*')->withKey()->get();
         $this->assertEquals($expected, $result);
     }
 
@@ -216,55 +216,35 @@ class MultiDriverTest extends TestCase
         $expected = 3;
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key($keys)->countPerScan(1)->count();
+        $result = $driver->key($keys)->count();
         $this->assertEquals($expected, $result);
     }
 
     /**
      * @test
      */
-    public function it_should_get_zero_count()
+    public function it_should_get_zero()
     {
         $keys = [];
         $expected = 0;
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key($keys)->countPerScan(1)->count();
+        $result = $driver->key($keys)->count();
         $this->assertEquals($expected, $result);
     }
 
     /**
      * @test
      */
-    public function it_should_get_one_count()
+    public function it_should_get_one()
     {
-        $key = $this->assembleKey('example');
+        $key = 'example';
         $expected = 1;
 
         $this->testRedisClient->set($key, 1);
 
         $driver = new MultiDriver($this->testRedisClient);
-        $result = $driver->key($key)->countPerScan(1)->count();
+        $result = $driver->key($key)->count();
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @test
-     */
-    public function it_should_scan_nothing_if_pattern_not_found()
-    {
-        $keyPattern = $this->assembleKey('http');
-        $key1 = $this->assembleKey('www');
-        $key2 = $this->assembleKey('com');
-        $keys = [
-            $key1,
-            $key2,
-        ];
-        $this->testRedisClient->set($keys[0], 1);
-        $this->testRedisClient->set($keys[1], 2);
-        $expected = [];
-        $driver = new MultiDriver($this->testRedisClient);
-        $actual = $driver->key($keyPattern)->countPerScan(1)->get();
-        $this->assertEquals($expected, $actual);
     }
 }
