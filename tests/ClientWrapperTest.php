@@ -48,4 +48,27 @@ class ClientWrapperTest extends TestCase
         $actual = $this->testRedisClient->mget($keys);
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_run_pipeline_command()
+    {
+        $keys = [
+            $this->assembleKey('abc'),
+            $this->assembleKey('def'),
+            $this->assembleKey('ghi'),
+        ];
+
+        $expected = [1, 2, 3,];
+        $wrapper = new ClientWrapper($this->testRedisClient);
+        $wrapper->pipeline(function (ClientWrapper $clientWrapper) use ($keys) {
+            $clientWrapper->string($keys[0])->set(1);
+            $clientWrapper->string($keys[1])->set(2);
+        });
+        $wrapper->string($keys[2])->set(3);
+
+        $actual = $this->testRedisClient->mget($keys);
+        $this->assertEquals($expected, $actual);
+    }
 }

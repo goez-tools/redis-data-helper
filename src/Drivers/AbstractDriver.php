@@ -3,6 +3,7 @@
 namespace Goez\RedisDataHelper\Drivers;
 
 use Predis\Client;
+use Predis\ClientContextInterface;
 
 /**
  * Class BaseDriver
@@ -11,7 +12,7 @@ use Predis\Client;
 abstract class AbstractDriver
 {
     /**
-     * @var Client
+     * @var Client|ClientContextInterface
      */
     protected $client;
 
@@ -22,9 +23,9 @@ abstract class AbstractDriver
 
     /**
      * AbstractDriver constructor.
-     * @param Client $client
+     * @param Client|ClientContextInterface $client
      */
-    public function __construct(Client $client)
+    public function __construct($client)
     {
         $this->client = $client;
     }
