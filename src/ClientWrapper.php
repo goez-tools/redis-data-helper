@@ -33,7 +33,8 @@ class ClientWrapper
      * @param ClientContextInterface $client
      * @return ClientWrapper
      */
-    public function createFromPipeline(ClientContextInterface $client){
+    public function createFromPipeline(ClientContextInterface $client)
+    {
         $this->client = $client;
         return $this;
     }
@@ -92,11 +93,12 @@ class ClientWrapper
      * @param \Closure $callback
      * @throws \Exception
      */
-    public function pipeline(\Closure $callback){
-        $oldClient = $this->client;
+    public function pipeline(\Closure $callback)
+    {
+        $origClient = $this->client;
         $pipeline = $this->client->pipeline();
         $callback($this->createFromPipeline($pipeline));
         $pipeline->execute();
-        $this->client = $oldClient;
+        $this->client = $origClient;
     }
 }

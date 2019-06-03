@@ -62,7 +62,7 @@ class ClientWrapperTest extends TestCase
 
         $expected = [1, 2, 3,];
         $wrapper = new ClientWrapper($this->testRedisClient);
-        $wrapper->pipeline(function(ClientWrapper $clientWrapper) use ($keys) {
+        $wrapper->pipeline(function (ClientWrapper $clientWrapper) use ($keys) {
             $clientWrapper->string($keys[0])->set(1);
             $clientWrapper->string($keys[1])->set(2);
         });
