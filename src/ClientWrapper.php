@@ -7,6 +7,7 @@ use Goez\RedisDataHelper\Drivers\SetsDriver;
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
 use Goez\RedisDataHelper\Drivers\StringDriver;
 use Predis\Client;
+use Predis\ClientContextInterface;
 
 /**
  * Class ClientWrapper
@@ -26,6 +27,15 @@ class ClientWrapper
     public function __construct(Client $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @param ClientContextInterface $client
+     * @return ClientWrapper
+     */
+    public function createFromPipeline(ClientContextInterface $client){
+        $this->client = $client;
+        return $this;
     }
 
     /**
@@ -76,5 +86,17 @@ class ClientWrapper
         $this->client->multi();
         $callback(new static($this->client));
         $this->client->exec();
+    }
+
+    /**
+     * @param \Closure $callback
+     * @throws \Exception
+     */
+    public function pipeline(\Closure $callback){
+        $oldClient = $this->client;
+        $pipeline = $this->client->pipeline();
+        $callback($this->createFromPipeline($pipeline));
+        $pipeline->execute();
+        $this->client = $oldClient;
     }
 }
