@@ -12,12 +12,46 @@ class MultiDriver extends AbstractDriver
     private $withKey = false;
 
     /**
+     * @var bool
+     */
+    private $useScan = false;
+
+    /**
+     * 每次 SCAN 時的 COUNT 數
+     *
+     * @var int
+     */
+    private $countPerScan;
+
+    /**
      * @return MultiDriver
      */
     public function withKey()
     {
         $this->withKey = true;
         return $this;
+    }
+
+    /**
+     * @param int|null $countPerScan
+     * @return $this
+     */
+    public function useScan($countPerScan = null)
+    {
+        $this->useScan = true;
+        $this->countPerScan = (!$countPerScan) ? $this->getDefaultCountPerScan() : $countPerScan;
+        return $this;
+    }
+
+    /**
+     * 取得預設的 countPerScan
+     *
+     * @return int
+     */
+    private function getDefaultCountPerScan()
+    {
+        $totalKeys = $this->client->dbsize();
+        return ceil($totalKeys / 10);
     }
 
     /**
@@ -79,9 +113,58 @@ class MultiDriver extends AbstractDriver
      */
     private function getKeys($key)
     {
-        return is_array($key) ?
-            $key :
-            $this->client->keys((string)$key);
+        if (is_array($key)) {
+            return $key;
+        }
+
+        if ($this->useScan) {
+            return $this->scanAll((string)$key);
+        } else {
+            return $this->client->keys((string)$key);
+        }
+    }
+
+    /**
+     * @param string $key
+     * @return array
+     */
+    private function scanAll($key)
+    {
+        $countPerScan = $this->countPerScan;
+        if (empty($key)) {
+            return [];
+        }
+
+        $cursor = '0';
+        $bufferArray = [];
+        $options = [
+            'MATCH' => $key,
+            'COUNT' => $countPerScan,
+        ];
+
+        do {
+            list($cursor, $result) = $this->client->scan($cursor, $options);
+            $bufferArray[] = $result;
+        } while ($cursor !== '0');
+
+        return $this->flattenArray($bufferArray);
+    }
+
+    /**
+     * Flatten 2D array into 1D array
+     * @param $array
+     * @return array
+     */
+    private function flattenArray($array)
+    {
+        $result = [];
+        foreach ($array as $item) {
+            foreach ($item as $value) {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
