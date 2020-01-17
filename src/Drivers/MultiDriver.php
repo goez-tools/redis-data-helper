@@ -143,7 +143,7 @@ class MultiDriver extends AbstractDriver
         ];
 
         do {
-            list($cursor, $result) = $this->client->scan($cursor, $options);
+            [$cursor, $result] = $this->client->scan($cursor, $options);
             $bufferArray[] = $result;
         } while ($cursor !== '0');
 
