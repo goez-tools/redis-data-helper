@@ -3,7 +3,7 @@
 namespace Tests\Drivers;
 
 use Goez\RedisDataHelper\Drivers\SortedSetsDriver;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Tests\InitTestRedisClient;
 
 class SortedSetsDriverTest extends TestCase
