@@ -92,7 +92,7 @@ class MultiDriver extends AbstractDriver
         }
         $result = $this->client->mget($keys);
         $values = array_map(function ($item) use ($callback) {
-            $value = json_decode($item, true);
+            $value = !is_null($item) ? json_decode($item, true) : null;
             return is_callable($callback) ? $callback($value) : $value;
         }, $result);
         return $this->withKey ? array_combine($keys, $values) : $values;

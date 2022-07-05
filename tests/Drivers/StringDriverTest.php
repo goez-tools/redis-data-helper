@@ -4,7 +4,7 @@ namespace Tests\Drivers;
 
 use Carbon\Carbon;
 use Goez\RedisDataHelper\Drivers\StringDriver;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Tests\InitTestRedisClient;
 
 class StringDriverTest extends TestCase

@@ -3,7 +3,7 @@
 namespace Tests\Drivers;
 
 use Goez\RedisDataHelper\Drivers\MultiDriver;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Tests\InitTestRedisClient;
 
 class MultiDriverTest extends TestCase
