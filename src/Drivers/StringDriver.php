@@ -22,6 +22,7 @@ class StringDriver extends AbstractDriver
      */
     public function get()
     {
-        return json_decode($this->client->get($this->key), true);
+        $value = $this->client->get($this->key);
+        return $value ? json_decode($value, true) : $value;
     }
 }
